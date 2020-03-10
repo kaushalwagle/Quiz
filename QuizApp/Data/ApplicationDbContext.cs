@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using QuizApp.Models;
 
 namespace QuizApp.Data
 {
@@ -11,5 +12,8 @@ namespace QuizApp.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) {
         }
+
+        public DbSet<Quiz> Quizes { get; set; }
+        public DbSet<Score> ScoreBoard { get; set; }
     }
 }

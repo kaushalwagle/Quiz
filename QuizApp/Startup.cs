@@ -12,6 +12,12 @@ using QuizApp.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Net;
+using System.IO;
+using System.Data;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using QuizApp.Models;
 
 namespace QuizApp
 {
@@ -59,6 +65,60 @@ namespace QuizApp
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
+            //Seed if necessary
+            // _ = SeedQuizesAsync(app.ApplicationServices);
+        }
+
+        private async Task SeedQuizesAsync(IServiceProvider serviceProvider) {
+            try {
+                string openTriviaResponseJSON = await GetAsync(@"https://opentdb.com/api.php?amount=50&category=9&difficulty=easy&type=multiple");
+
+                //Referenced from https://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm
+
+                JObject openTriviaResponse = JObject.Parse(openTriviaResponseJSON);
+
+                // get JSON result objects into a list
+                IList<JToken> results = openTriviaResponse["results"].Children().ToList();
+
+                // serialize JSON results into .NET objects
+                IList<Quiz> quizes = new List<Quiz>();
+                foreach (JToken result in results) {
+                    // JToken.ToObject is a helper method that uses JsonSerializer internally
+                    quizes.Add(new Quiz {
+                        Question = result["question"].ToString(),
+                        Answer = result["correct_answer"].ToString(),
+                        Incorrect1 = result["incorrect_answers"][0].ToString(),
+                        Incorrect2 = result["incorrect_answers"][1].ToString(),
+                        Incorrect3 = result["incorrect_answers"][2].ToString()
+                    });
+                }
+
+                //Referenced  https://github.com/kaushalwagle/4yearplanner/blob/master/Startup.cs
+                //Seed if the quiz table is empty
+                using (var serviceScope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope()) {
+                    var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                    if (!context.Quizes.Any()) {
+                        context.Quizes.AddRange(quizes);
+                    }
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.StackTrace);
+            }
+        }
+
+        //referenced from: https://stackoverflow.com/questions/27108264/c-sharp-how-to-properly-make-a-http-web-get-request
+        private async Task<string> GetAsync(string uri) {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+            using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream)) {
+                return await reader.ReadToEndAsync();
+            }
         }
     }
 }
