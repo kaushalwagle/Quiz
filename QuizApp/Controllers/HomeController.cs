@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using QuizApp.Data;
 using QuizApp.Models;
 
@@ -23,34 +25,13 @@ namespace QuizApp.Controllers
 
         [Authorize]
         public IActionResult Index() {
+            HttpContext.Session.SetInt32("State", 0);
+            HttpContext.Session.SetInt32("Points", 0);
+            HttpContext.Session.SetInt32("TotalQuestionServed", 0);
             return View();
         }
 
-        [Authorize]
-        public IActionResult Quiz() {
-            List<Quiz> randomQuizes = new List<Quiz>();
-            do {
-                Random rnd = new Random();
-                int rndId = rnd.Next(_context.Quizes.Min(q => q.Id), _context.Quizes.Max(q => q.Id));
-
-                Quiz rndQuiz = _context.Quizes.Find(rndId);
-
-                if (!randomQuizes.Contains(rndQuiz))
-                    randomQuizes.Add(rndQuiz);
-
-            } while (randomQuizes.Count < 10);
-            return View(randomQuizes);
-        }
-
-        //CheckAnswer?id=51&option=AmICorrect
-        [Authorize]
-        public IActionResult CheckAnswer(int id, string option) {
-            Quiz quizFromDb = _context.Quizes.Find(id);
-            string result = "Incorrect";
-            if (quizFromDb.Answer.Equals(option, StringComparison.InvariantCultureIgnoreCase))
-                result = "Correct";
-            return Json(result);
-        }
+        
         public IActionResult Privacy() {
             return View();
         }

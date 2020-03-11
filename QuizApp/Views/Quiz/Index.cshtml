@@ -1,26 +1,30 @@
-﻿@model IEnumerable<QuizApp.Models.Quiz>
+﻿@model QuizApp.Models.Quiz
+
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Quiz";
     Random rnd = new Random();
+
 }
 
 <h1>Quiz</h1>
-<strong>Score: </strong><span>10/10</span>
+<strong>Score: </strong><span>@HttpContextAccessor.HttpContext.Session.GetInt32("Points")/10</span>
 
-@foreach (var item in Model) {
+@{ 
     string[] options = {
-            item.Answer,
-            item.Incorrect1,
-            item.Incorrect2,
-            item.Incorrect3
+            Model.Answer,
+            Model.Incorrect1,
+            Model.Incorrect2,
+            Model.Incorrect3
         };
 
     options = options.OrderBy(o => rnd.Next()).ToArray();
-
-    <h2>@item.Question</h2>
-    <form asp-action="CheckAnswer" method="get">
-        <input hidden name="id" value="@item.Id" />
+}
+    <h2>@Model.Question</h2>
+    <form asp-action="CheckAnswer" asp-controller="Quiz" method="get">
+        <input hidden name="id" value="@Model.Id" />
         <div class="form-check">
             <input class="form-check-input" type="radio" name="option" value="@options[0]">
             <label class="form-check-label">
@@ -45,6 +49,5 @@
                 @options[3]
             </label>
         </div>
-        <input type="submit" />
+        <input type="submit" value="Check" />
     </form>
-}
