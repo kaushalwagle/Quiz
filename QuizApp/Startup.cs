@@ -67,7 +67,7 @@ namespace QuizApp
             });
 
             //Seed if necessary
-            // _ = SeedQuizesAsync(app.ApplicationServices);
+            _ = SeedQuizesAsync(app.ApplicationServices);
         }
 
         private async Task SeedQuizesAsync(IServiceProvider serviceProvider) {
@@ -86,11 +86,11 @@ namespace QuizApp
                 foreach (JToken result in results) {
                     // JToken.ToObject is a helper method that uses JsonSerializer internally
                     quizes.Add(new Quiz {
-                        Question = result["question"].ToString(),
-                        Answer = result["correct_answer"].ToString(),
-                        Incorrect1 = result["incorrect_answers"][0].ToString(),
-                        Incorrect2 = result["incorrect_answers"][1].ToString(),
-                        Incorrect3 = result["incorrect_answers"][2].ToString()
+                        Question = WebUtility.HtmlDecode(result["question"].ToString()),
+                        Answer = WebUtility.HtmlDecode(result["correct_answer"].ToString()),
+                        Incorrect1 = WebUtility.HtmlDecode(result["incorrect_answers"][0].ToString()),
+                        Incorrect2 = WebUtility.HtmlDecode(result["incorrect_answers"][1].ToString()),
+                        Incorrect3 = WebUtility.HtmlDecode(result["incorrect_answers"][2].ToString())
                     });
                 }
 

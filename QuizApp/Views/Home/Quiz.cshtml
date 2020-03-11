@@ -1,0 +1,54 @@
+﻿@model IEnumerable<QuizApp.Models.Quiz>
+
+@{
+    ViewData["Title"] = "Quiz";
+}
+
+<h1>Quiz</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Question)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Answer))
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Incorrect1)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Incorrect2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Incorrect3)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Question)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Answer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Incorrect1)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Incorrect2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Incorrect3)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
