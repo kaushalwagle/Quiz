@@ -42,12 +42,12 @@ namespace QuizApp.Controllers
             return View(randomQuizes);
         }
 
-        //CheckAnswer?id=51&answer=AmICorrect
+        //CheckAnswer?id=51&option=AmICorrect
         [Authorize]
-        public IActionResult CheckAnswer(int id, string answer) {
+        public IActionResult CheckAnswer(int id, string option) {
             Quiz quizFromDb = _context.Quizes.Find(id);
             string result = "Incorrect";
-            if (quizFromDb.Answer.Equals(answer, StringComparison.InvariantCultureIgnoreCase))
+            if (quizFromDb.Answer.Equals(option, StringComparison.InvariantCultureIgnoreCase))
                 result = "Correct";
             return Json(result);
         }
