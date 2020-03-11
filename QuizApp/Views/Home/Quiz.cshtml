@@ -2,39 +2,49 @@
 
 @{
     ViewData["Title"] = "Quiz";
+    Random rnd = new Random();
 }
 
 <h1>Quiz</h1>
 <strong>Score: </strong><span>10/10</span>
+
 @foreach (var item in Model) {
+    string[] options = {
+            item.Answer,
+            item.Incorrect1,
+            item.Incorrect2,
+            item.Incorrect3
+        };
+
+    options = options.OrderBy(o => rnd.Next()).ToArray();
+
     <h2>@item.Question</h2>
     <form asp-action="CheckAnswer" method="get">
         <input hidden name="id" value="@item.Id" />
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="option" value="@item.Answer">
+            <input class="form-check-input" type="radio" name="option" value="@options[0]">
             <label class="form-check-label">
-                @item.Answer
+                @options[0]
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="option" value="@item.Incorrect1">
+            <input class="form-check-input" type="radio" name="option" value="@options[1]">
             <label class="form-check-label">
-                @item.Incorrect1
+                @options[1]
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="option" value="@item.Incorrect2">
+            <input class="form-check-input" type="radio" name="option" value="@options[2]">
             <label class="form-check-label">
-                @item.Incorrect2
+                @options[2]
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="option" value="@item.Incorrect3">
+            <input class="form-check-input" type="radio" name="option" value="@options[3]">
             <label class="form-check-label">
-                @item.Incorrect3
+                @options[3]
             </label>
         </div>
-        <input type="submit"/>
+        <input type="submit" />
     </form>
 }
-<h2></h2>
