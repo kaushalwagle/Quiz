@@ -11,8 +11,7 @@ using QuizApp.Models;
 
 namespace QuizApp.Controllers
 {
-    public class HomeController : Controller
-    {
+    public class HomeController : Controller {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
 
@@ -32,7 +31,7 @@ namespace QuizApp.Controllers
             List<Quiz> randomQuizes = new List<Quiz>();
             do {
                 Random rnd = new Random();
-                int rndId = rnd.Next(_context.Quizes.Min(q => q.Id), _context.Quizes.Max(q=>q.Id));
+                int rndId = rnd.Next(_context.Quizes.Min(q => q.Id), _context.Quizes.Max(q => q.Id));
 
                 Quiz rndQuiz = _context.Quizes.Find(rndId);
 
@@ -43,14 +42,14 @@ namespace QuizApp.Controllers
             return View(randomQuizes);
         }
 
+        //CheckAnswer?id=51&answer=AmICorrect
         [Authorize]
-        [HttpGet]
-        public IActionResult CheckAnswer(Quiz  quiz, string answer) {
-            Quiz quizFromDb = _context.Quizes.Find(quiz.Id);
+        public IActionResult CheckAnswer(int id, string answer) {
+            Quiz quizFromDb = _context.Quizes.Find(id);
             string result = "Incorrect";
             if (quizFromDb.Answer.Equals(answer, StringComparison.InvariantCultureIgnoreCase))
                 result = "Correct";
-            return Ok(result);
+            return Json(result);
         }
         public IActionResult Privacy() {
             return View();
