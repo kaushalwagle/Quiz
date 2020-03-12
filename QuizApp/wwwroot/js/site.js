@@ -4,10 +4,10 @@
 // Write your JavaScript code.
 
 
-function checkResult(id) {
+function checkResult(id, baseUrl) {
     if ($('input[name = "option"]').is(":checked")) {
         var option = $('input[name="option"]:checked').val();
-        var urlCheck = 'https://localhost:44303/Quiz/CheckAnswer?id=' + id + '&option=' + option;
+        var urlCheck = baseUrl+'/Quiz/CheckAnswer?id=' + id + '&option=' + option;
         $.ajax({
             type: 'GET',
             url: urlCheck,
@@ -20,7 +20,6 @@ function checkResult(id) {
                 $('input[name="option"]').parent().addClass("btn-secondary");
 
                 if (res == "Correct") {
-                    $("#score").text($("#score").val() + 1);
                     $('#btnCheck').addClass("btn btn-success");
                     $('input[name="option"]:checked').parent().removeClass("btn-secondary").addClass("btn btn-success disabled");
                 } else {
@@ -30,7 +29,7 @@ function checkResult(id) {
 
                 $('#btnCheck').text("Next");
                 $('#btnCheck').removeAttr("onClick");
-                $('#btnCheck').attr("href", "https://localhost:44303/Quiz");
+                $('#btnCheck').attr("href", baseUrl+"/Quiz");
 
             },
             error: function (error) {

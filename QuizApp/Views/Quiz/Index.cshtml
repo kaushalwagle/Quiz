@@ -7,6 +7,9 @@
     ViewData["Title"] = "Quiz";
     Random rnd = new Random();
 
+    HttpContext Current = HttpContextAccessor.HttpContext;
+    string baseUrl = $"{Current.Request.Scheme}://{Current.Request.Host}";
+
 }
 
 
@@ -40,6 +43,4 @@
         <input type="radio" id="option4" name="option" value="@options[3]" autocomplete="off"> @options[3]
     </label>
 </div>
-<a id="btnCheck" class="btn btn-primary btn-lg btn-block" onclick="checkResult(@Model.Id)">Check</a>
-
-
+<a id="btnCheck" class="btn btn-primary btn-lg btn-block" onclick="checkResult(@Model.Id, '@baseUrl')">Check</a>
