@@ -30,7 +30,7 @@ namespace QuizApp.Controllers
 
             //Asked 10 questions
             int totalQuestionsServed = (int)HttpContext.Session.GetInt32("TotalQuestionServed");
-            if (totalQuestionsServed <= 10) {
+            if (totalQuestionsServed < 10) {
                 Quiz rndQuiz = _context.Quizes.Find(rndId);
                 totalQuestionsServed++;
                 HttpContext.Session.SetInt32("TotalQuestionServed", totalQuestionsServed);

@@ -25,21 +25,21 @@
 }
 <h2>@HttpContextAccessor.HttpContext.Session.GetInt32("TotalQuestionServed"). @Model.Question</h2>
 <div class="btn-group-toggle row" id="oprionGroup" data-toggle="buttons">
-    <label class="btn btn-info col">
+
+    <label class="btn btn-info btn-lg btn-block col m-2">
         <input type="radio" id="option1" name="option" value="@options[0]" autocomplete="off"> @options[0]
     </label>
-    <label class="btn btn-info col">
+    <label class="btn btn-info btn-lg btn-block col m-2">
         <input type="radio" id="option2" name="option" value="@options[1]" autocomplete="off"> @options[1]
     </label>
     <div class="w-100"></div>
-    <label class="btn btn-info col">
+    <label class="btn btn-info btn-lg btn-block col m-2">
         <input type="radio" id="option3" name="option" value="@options[2]" autocomplete="off"> @options[2]
     </label>
-    <label class="btn btn-info col">
+    <label class="btn btn-info btn-lg btn-block col m-2">
         <input type="radio" id="option4" name="option" value="@options[3]" autocomplete="off"> @options[3]
     </label>
 </div>
-    
 <a id="btnCheck" class="btn btn-primary btn-lg btn-block" onclick="checkResult(@Model.Id)">Check</a>
 
 
