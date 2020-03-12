@@ -1,11 +1,64 @@
-﻿
+﻿@model IEnumerable<QuizApp.Models.Score>
+
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Result";
+    int rank = 1;
+    int myRank = 0;
+    DateTime currentScoretime =(DateTime) ViewData["currentScoreTime"];
 }
 
 <h1>Result</h1>
 
 <strong>Score: </strong><span>@HttpContextAccessor.HttpContext.Session.GetInt32("Points")/10</span>
+<strong>Rank: </strong><span id="spnRank"></span>
+
+<br />
+<a class="btn btn-primary" asp-action="Index">Play Again!</a>
+<h1>Leader Board</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Rank
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Points)
+            </th>
+            <th>
+                Scored By
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ScoredAt)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @rank.ToString()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Points)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QuizUser.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ScoredAt)
+                </td>
+            </tr>
+            if(item.ScoredAt == currentScoretime){
+                myRank = rank;
+            }
+            rank++;
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    $('#spnRank').text('@myRank');
+</script>

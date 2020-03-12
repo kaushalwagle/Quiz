@@ -1,8 +1,50 @@
-﻿@{
+﻿@model IEnumerable<QuizApp.Models.Score>
+@{
     ViewData["Title"] = "Home Page";
+    int rank = 1;
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome to Quiz!</h1>
-    <a asp-action="Index"asp-controller="Quiz">Start Quiz</a>
+    <a class="btn btn-primary" asp-action="Index" asp-controller="Quiz">Start Quiz</a>
 </div>
+
+<h1>Leader Board</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Rank
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Points)
+            </th>
+            <th>
+                Scored By
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ScoredAt)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @rank.ToString()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Points)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QuizUser.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ScoredAt)
+                </td>
+            </tr>
+            rank++;
+        }
+    </tbody>
+</table>

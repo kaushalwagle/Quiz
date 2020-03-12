@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuizApp.Data;
 using QuizApp.Models;
 
@@ -24,11 +25,6 @@ namespace QuizApp.Controllers
 
         // GET: Quiz
         public IActionResult Index() {
-            HttpContext.Session.SetInt32("State", 1);
-
-
-
-
             Random rnd = new Random();
             int rndId = rnd.Next(_context.Quizes.Min(q => q.Id), _context.Quizes.Max(q => q.Id));
 
@@ -44,14 +40,30 @@ namespace QuizApp.Controllers
         }
 
         public async Task<IActionResult> Result() {
+
+            HttpContext.Session.SetInt32("TotalQuestionServed", 0);
+            int points = (int)HttpContext.Session.GetInt32("Points");
+
+            IdentityUser currentPlayer = await _userManager.GetUserAsync(User);
             Score score = new Score {
-                Points = (int)HttpContext.Session.GetInt32("Points"),
+                Points = points,
                 ScoredAt = DateTime.Now,
-                QuizUser = await _userManager.GetUserAsync(User)
+                QuizUser = currentPlayer
             };
             _context.ScoreBoard.Add(score);
+
             await _context.SaveChangesAsync();
-            return View();
+            ViewData["currentScoreTime"] = _context.ScoreBoard
+                .OrderByDescending(s => s.ScoredAt)
+                .FirstOrDefault()
+                .ScoredAt;
+
+            IEnumerable<Score> myScores = _context.ScoreBoard
+                .Include(u => u.QuizUser)
+                .OrderByDescending(s => s.Points);
+            
+
+            return View(myScores);
         }
 
 
