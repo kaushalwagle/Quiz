@@ -78,6 +78,22 @@ namespace QuizApp
         }
 
         private async Task SeedQuizesAsync(IServiceProvider serviceProvider) {
+            
+            //Referenced  https://github.com/kaushalwagle/4yearplanner/blob/master/Startup.cs
+            //Seed if the quiz table is empty
+            using (var serviceScope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope()) {
+                var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (!context.Quizes.Any()) {
+
+                    context.Quizes.AddRange(await GetQuestionsFromOpenDatabase());
+                }
+                context.SaveChanges();
+            }
+
+        }
+
+        public async Task<IList<Quiz>> GetQuestionsFromOpenDatabase() {
+            IList<Quiz> quizes = new List<Quiz>();
             try {
                 string openTriviaResponseJSON = await GetAsync(@"https://opentdb.com/api.php?amount=50&category=9&difficulty=easy&type=multiple");
 
@@ -89,7 +105,6 @@ namespace QuizApp
                 IList<JToken> results = openTriviaResponse["results"].Children().ToList();
 
                 // serialize JSON results into .NET objects
-                IList<Quiz> quizes = new List<Quiz>();
                 foreach (JToken result in results) {
                     // JToken.ToObject is a helper method that uses JsonSerializer internally
                     quizes.Add(new Quiz {
@@ -100,21 +115,17 @@ namespace QuizApp
                         Incorrect3 = WebUtility.HtmlDecode(result["incorrect_answers"][2].ToString())
                     });
                 }
-
-                //Referenced  https://github.com/kaushalwagle/4yearplanner/blob/master/Startup.cs
-                //Seed if the quiz table is empty
-                using (var serviceScope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope()) {
-                    var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
-                    if (!context.Quizes.Any()) {
-                        context.Quizes.AddRange(quizes);
-                    }
-                    context.SaveChanges();
-                }
             }
             catch (Exception e) {
+
                 Console.WriteLine(e.StackTrace);
+
+                var quizesJSON = System.IO.File.ReadAllText(@"json/Quizes.json");
+                quizes = JsonConvert.DeserializeObject<List<Quiz>>(quizesJSON);
             }
+            return quizes;
         }
+
 
         //referenced from: https://stackoverflow.com/questions/27108264/c-sharp-how-to-properly-make-a-http-web-get-request
         private async Task<string> GetAsync(string uri) {
