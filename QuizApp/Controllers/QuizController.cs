@@ -43,6 +43,8 @@ namespace QuizApp.Controllers
 
             HttpContext.Session.SetInt32("TotalQuestionServed", 0);
             int points = (int)HttpContext.Session.GetInt32("Points");
+            ViewData["Points"] = points;
+            HttpContext.Session.SetInt32("Points", 0);
 
             IdentityUser currentPlayer = await _userManager.GetUserAsync(User);
             Score score = new Score {
